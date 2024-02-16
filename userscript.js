@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pytems
 // @namespace    https://py9.dev/
-// @version      1.0.1
+// @version      1.0.2
 // @description  Create & Manage Items in Infinite Craft
 // @author       Py9
 // @match        https://neal.fun/infinite-craft/
@@ -10,6 +10,17 @@
 // ==/UserScript==
 
 (function() {
+    const version = '1.0.2';
+    let checkVersion = async () => {
+        let response = await fetch('https://raw.githubusercontent.com/Proyo9/Infinite-Hack/main/version.txt');
+        let text = await response.text();
+        if (text !== version) {
+            alert('A new version of Pytems is available! Check console for more info.');
+            console.info('Pytems | New version available at https://greasyfork.org/en/scripts/487439-pytems');
+        }
+    }
+    checkVersion();
+
     let script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
     script.type = 'module';

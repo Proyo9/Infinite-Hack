@@ -2,7 +2,7 @@
 // @name         Pytems
 // @namespace    https://py9.dev/
 // @version      1.0.2
-// @description  Create & Manage Items in Infinite Craft
+// @description  Create & Manage Items in Infinite Craft with an Easy to use Menu!
 // @author       Py9
 // @match        https://neal.fun/infinite-craft/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=neal.fun
@@ -14,7 +14,7 @@
     let checkVersion = async () => {
         let response = await fetch('https://raw.githubusercontent.com/Proyo9/Infinite-Hack/main/version.txt');
         let text = await response.text();
-        if (text !== version) {
+        if (!text.includes(version)) {
             alert('A new version of Pytems is available! Check console for more info.');
             console.info('Pytems | New version available at https://greasyfork.org/en/scripts/487439-pytems');
         }

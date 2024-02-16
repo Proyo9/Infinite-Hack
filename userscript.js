@@ -10,6 +10,10 @@
 // ==/UserScript==
 
 (function() {
+    let script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
+    script.type = 'module';
+    document.head.appendChild(script);
     let items = localStorage.getItem('infinite-craft-data')
     if (items === null) {
         items = {"elements":[{"text":"Water","emoji":"💧","discovered":false},{"text":"Fire","emoji":"🔥","discovered":false},{"text":"Wind","emoji":"🌬️","discovered":false},{"text":"Earth","emoji":"🌍","discovered":false}]}
@@ -62,7 +66,7 @@
 
     let createItemMenu = document.createElement('div');
     createItemMenu.style.position = 'fixed';
-    createItemMenu.style.top = '25%';
+    createItemMenu.style.top = '15%';
     createItemMenu.style.left = '50%';
     createItemMenu.style.transform = 'translateX(-50%)';
     createItemMenu.style.zIndex = 1000000;
@@ -101,6 +105,33 @@
     createItemEmoji.value = '📋';
     createItemMenu.appendChild(createItemEmoji);
 
+    let pickerButton = document.createElement('button');
+    pickerButton.textContent = 'Pick Emoji';
+    pickerButton.style.padding = '10px 20px';
+    pickerButton.style.backgroundColor = '#2196F3';
+    pickerButton.style.color = 'white';
+    pickerButton.style.border = 'none';
+    pickerButton.style.borderRadius = '5px';
+    pickerButton.style.cursor = 'pointer';
+    pickerButton.style.marginBottom = '10px';
+    createItemMenu.appendChild(pickerButton);
+    pickerButton.addEventListener('click', function() {
+        pickerButton.style.display = 'none';
+        emojiPicker.style.display = 'flex';
+    }
+    );
+
+    let emojiPicker = document.createElement('emoji-picker');
+    emojiPicker.style.marginTop = '10px';
+    emojiPicker.style.marginBottom = '10px';
+    emojiPicker.style.display = 'none';
+    emojiPicker.addEventListener('emoji-click', (event) => {
+        createItemEmoji.value = event.detail.emoji.unicode;
+        emojiPicker.style.display = 'none';
+        pickerButton.style.display = 'flex';
+    });
+    createItemMenu.appendChild(emojiPicker);
+
     let createItemDiscoveredLabel = document.createElement('label');
     createItemDiscoveredLabel.textContent = 'Discovered';
     createItemDiscoveredLabel.style.fontSize = '16px';
@@ -137,7 +168,7 @@
 
     let deleteItemMenu = document.createElement('div');
     deleteItemMenu.style.position = 'fixed';
-    deleteItemMenu.style.top = '25%';
+    deleteItemMenu.style.top = '15%';
     deleteItemMenu.style.left = '50%';
     deleteItemMenu.style.transform = 'translateX(-50%)';
     deleteItemMenu.style.zIndex = 1000000;

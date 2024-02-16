@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pytems
 // @namespace    https://py9.dev/
-// @version      1.0.0
+// @version      1.0.1
 // @description  Create & Manage Items in Infinite Craft
 // @author       Py9
 // @match        https://neal.fun/infinite-craft/

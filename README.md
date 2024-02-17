@@ -9,5 +9,5 @@ Currently the best Infinite Craft hack/cheat.
 
 Have fun creating your custom items and messing around!
 
-# Future Featurs
+# Future Features
 - Save manager

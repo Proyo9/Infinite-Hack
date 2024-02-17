@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pytems
 // @namespace    https://py9.dev/
-// @version      1.0.2
+// @version      1.0.3
 // @description  Create & Manage Items in Infinite Craft with an Easy to use Menu!
 // @author       Py9
 // @match        https://neal.fun/infinite-craft/
@@ -10,16 +10,21 @@
 // ==/UserScript==
 
 (function() {
-    const version = '1.0.2';
+    const version = '1.0.3';
     let checkVersion = async () => {
         let response = await fetch('https://raw.githubusercontent.com/Proyo9/Infinite-Hack/main/version.txt');
         let text = await response.text();
         if (!text.includes(version)) {
-            alert('A new version of Pytems is available! Check console for more info.');
-            console.info('Pytems | New version available at https://greasyfork.org/en/scripts/487439-pytems');
+            let items = document.querySelectorAll('.item');
+            items.forEach(item => {
+                if (item.textContent.includes('Thank you for using Pytems')) {
+                    item.innerHTML = `<span data-v-adfd717a="" class="item-emoji">❗</span> Your Pytems is not up to date, check console to get latest update.`;
+                    console.log('%cYour Pytems is not up to date, get the latest update from: %chttps://greasyfork.org/en/scripts/487439-pytems', 'color: red; font-weight: bold;', 'color: blue; text-decoration: underline;');
+                }
+            });
+            
         }
     }
-    checkVersion();
  
     let script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
@@ -38,6 +43,7 @@
  
     }
     localStorage.setItem('infinite-craft-data', JSON.stringify(items))
+    checkVersion();
  
     let buttonContainer = document.createElement('div');
     buttonContainer.style.display = 'flex';

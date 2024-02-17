@@ -20,7 +20,7 @@
         }
     }
     checkVersion();
-
+ 
     let script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
     script.type = 'module';
@@ -35,15 +35,15 @@
     let thanks = {"text":"Thank you for using Pytems","emoji":"🍉","discovered":false}
     if (!items.elements.some(e => e.text === thanks.text)) {
         items.elements.unshift(thanks)
-
+ 
     }
     localStorage.setItem('infinite-craft-data', JSON.stringify(items))
-
+ 
     let buttonContainer = document.createElement('div');
     buttonContainer.style.display = 'flex';
     buttonContainer.style.justifyContent = 'center';
     document.body.appendChild(buttonContainer);
-
+ 
     let createButton = document.createElement('button');
     createButton.textContent = 'Create Item';
     createButton.style.zIndex = 1000000;
@@ -58,7 +58,7 @@
     createButton.addEventListener('click', function() {
         createItemMenu.style.display = 'flex';
     });
-
+ 
     let deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete Item';
     deleteButton.style.zIndex = 1000000;
@@ -73,6 +73,57 @@
     buttonContainer.appendChild(deleteButton);
     deleteButton.addEventListener('click', function() {
         deleteItemMenu.style.display = 'flex';
+    });
+ 
+    let magicCreateButton = document.createElement('button');
+    magicCreateButton.textContent = 'Magic Create';
+    magicCreateButton.style.zIndex = 1000000;
+    magicCreateButton.style.padding = '10px 20px';
+    magicCreateButton.style.backgroundColor = '#6779d0';
+    magicCreateButton.style.color = 'white';
+    magicCreateButton.style.border = 'none';
+    magicCreateButton.style.borderRadius = '5px';
+    magicCreateButton.style.cursor = 'pointer';
+    magicCreateButton.style.marginLeft = '10px';
+    magicCreateButton.style.marginTop = '10px';
+    buttonContainer.appendChild(magicCreateButton);
+    magicCreateButton.addEventListener('click', function() {
+        const firstElement = prompt("First element's name...");
+        const secondElement = prompt("Second element's name...");
+        var text = '';
+        fetch(`https://neal.fun/api/infinite-craft/pair?first=${firstElement}&second=${secondElement}`)
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                // Return the ReadableStream directly
+                return response.body;
+            })
+            .then(body => {
+                const reader = body.getReader();
+
+                const readStream = () => {
+                return reader.read().then(({ done, value }) => {
+                    if (done) {
+                        responseJSON = JSON.parse(text);
+                        let newItem = {"text":responseJSON.result,"emoji":responseJSON.emoji,"discovered":responseJSON.isNew};
+                        items = localStorage.getItem('infinite-craft-data')
+                        items = JSON.parse(items)
+                        items.elements.push(newItem);
+                        localStorage.setItem('infinite-craft-data', JSON.stringify(items))
+                        location.reload();
+                        return;
+                    }
+                    text += new TextDecoder().decode(value);
+                    return readStream();
+                });
+                };
+
+                return readStream();
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
     });
 
     let createItemMenu = document.createElement('div');
@@ -92,6 +143,7 @@
     createItemMenu.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
     document.body.appendChild(createItemMenu);
 
+ 
     let createItemInput = document.createElement('input');
     createItemInput.style.padding = '10px';
     createItemInput.style.margin = '5px';
@@ -115,7 +167,7 @@
     createItemEmoji.placeholder = 'Enter the emoji for the item';
     createItemEmoji.value = '📋';
     createItemMenu.appendChild(createItemEmoji);
-
+ 
     let pickerButton = document.createElement('button');
     pickerButton.textContent = 'Pick Emoji';
     pickerButton.style.padding = '10px 20px';
@@ -131,7 +183,7 @@
         emojiPicker.style.display = 'flex';
     }
     );
-
+ 
     let emojiPicker = document.createElement('emoji-picker');
     emojiPicker.style.marginTop = '10px';
     emojiPicker.style.marginBottom = '10px';
@@ -142,13 +194,13 @@
         pickerButton.style.display = 'flex';
     });
     createItemMenu.appendChild(emojiPicker);
-
+ 
     let createItemDiscoveredLabel = document.createElement('label');
     createItemDiscoveredLabel.textContent = 'Discovered';
     createItemDiscoveredLabel.style.fontSize = '16px';
     createItemDiscoveredLabel.style.outline = 'none';
     createItemMenu.appendChild(createItemDiscoveredLabel);
-
+ 
     let createItemDiscovered = document.createElement('input');
     createItemDiscovered.type = 'checkbox';
     createItemDiscovered.style.border = '1px solid #ddd';
@@ -157,7 +209,7 @@
     createItemDiscovered.style.outline = 'none';
     createItemDiscovered.style.marginBottom = '5px';
     createItemMenu.appendChild(createItemDiscovered);
-
+ 
     let createItemSubmit = document.createElement('button');
     createItemSubmit.textContent = 'Create Item';
     createItemSubmit.style.padding = '10px 20px';
@@ -167,7 +219,7 @@
     createItemSubmit.style.borderRadius = '5px';
     createItemSubmit.style.cursor = 'pointer';
     createItemMenu.appendChild(createItemSubmit);
-
+ 
     createItemSubmit.addEventListener('click', function() {
         let newItem = {"text":createItemInput.value,"emoji":createItemEmoji.value,"discovered":createItemDiscovered.checked};
         items = localStorage.getItem('infinite-craft-data')
@@ -176,7 +228,7 @@
         localStorage.setItem('infinite-craft-data', JSON.stringify(items))
         location.reload();
     });
-
+ 
     let deleteItemMenu = document.createElement('div');
     deleteItemMenu.style.position = 'fixed';
     deleteItemMenu.style.top = '15%';
@@ -193,6 +245,8 @@
     deleteItemMenu.style.border = '1px solid #ddd';
     deleteItemMenu.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
     document.body.appendChild(deleteItemMenu);
+ 
+
 
     let deleteItemInput = document.createElement('input');
     deleteItemInput.style.padding = '10px';
@@ -204,7 +258,7 @@
     deleteItemInput.style.outline = 'none';
     deleteItemInput.placeholder = 'Enter the name of the item';
     deleteItemMenu.appendChild(deleteItemInput);
-
+ 
     let deleteItemSubmit = document.createElement('button');
     deleteItemSubmit.textContent = 'Delete Item';
     deleteItemSubmit.style.padding = '10px 20px';
@@ -214,7 +268,7 @@
     deleteItemSubmit.style.borderRadius = '5px';
     deleteItemSubmit.style.cursor = 'pointer';
     deleteItemMenu.appendChild(deleteItemSubmit);
-
+ 
     deleteItemSubmit.addEventListener('click', function() {
         items = localStorage.getItem('infinite-craft-data')
         items = JSON.parse(items)

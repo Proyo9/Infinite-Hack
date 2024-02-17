@@ -88,42 +88,97 @@
     magicCreateButton.style.marginTop = '10px';
     buttonContainer.appendChild(magicCreateButton);
     magicCreateButton.addEventListener('click', function() {
-        const firstElement = prompt("First element's name...");
-        const secondElement = prompt("Second element's name...");
-        var text = '';
-        fetch(`https://neal.fun/api/infinite-craft/pair?first=${firstElement}&second=${secondElement}`)
-            .then(response => {
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-                // Return the ReadableStream directly
-                return response.body;
-            })
-            .then(body => {
-                const reader = body.getReader();
+        let magicCreateMenu = document.createElement('div');
+        magicCreateMenu.style.position = 'fixed';
+        magicCreateMenu.style.top = '15%';
+        magicCreateMenu.style.left = '50%';
+        magicCreateMenu.style.transform = 'translateX(-50%)';
+        magicCreateMenu.style.zIndex = 1000000;
+        magicCreateMenu.style.padding = '20px';
+        magicCreateMenu.style.backgroundColor = 'white';
+        magicCreateMenu.style.borderRadius = '5px';
+        magicCreateMenu.style.display = 'flex';
+        magicCreateMenu.style.flexDirection = 'column';
+        magicCreateMenu.style.alignItems = 'center';
+        magicCreateMenu.style.justifyContent = 'center';
+        magicCreateMenu.style.border = '1px solid #ddd';
+        magicCreateMenu.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+        document.body.appendChild(magicCreateMenu);
 
-                const readStream = () => {
-                return reader.read().then(({ done, value }) => {
-                    if (done) {
-                        responseJSON = JSON.parse(text);
-                        let newItem = {"text":responseJSON.result,"emoji":responseJSON.emoji,"discovered":responseJSON.isNew};
-                        items = localStorage.getItem('infinite-craft-data')
-                        items = JSON.parse(items)
-                        items.elements.push(newItem);
-                        localStorage.setItem('infinite-craft-data', JSON.stringify(items))
-                        location.reload();
-                        return;
+        let firstElementInput = document.createElement('input');
+        firstElementInput.style.padding = '10px';
+        firstElementInput.style.margin = '5px';
+        firstElementInput.style.width = '100%';
+        firstElementInput.style.border = '1px solid #ddd';
+        firstElementInput.style.borderRadius = '5px';
+        firstElementInput.style.fontSize = '16px';
+        firstElementInput.style.outline = 'none';
+        firstElementInput.placeholder = "Element One";
+        magicCreateMenu.appendChild(firstElementInput);
+
+        let secondElementInput = document.createElement('input');
+        secondElementInput.style.padding = '10px';
+        secondElementInput.style.margin = '5px';
+        secondElementInput.style.width = '100%';
+        secondElementInput.style.border = '1px solid #ddd';
+        secondElementInput.style.borderRadius = '5px';
+        secondElementInput.style.fontSize = '16px';
+        secondElementInput.style.outline = 'none';
+        secondElementInput.placeholder = "Element Two";
+        magicCreateMenu.appendChild(secondElementInput);
+
+        let createButton = document.createElement('button');
+        createButton.textContent = 'Create';
+        createButton.style.zIndex = 1000000;
+        createButton.style.padding = '10px 20px';
+        createButton.style.backgroundColor = '#6779d0';
+        createButton.style.color = 'white';
+        createButton.style.border = 'none';
+        createButton.style.borderRadius = '5px';
+        createButton.style.cursor = 'pointer';
+        createButton.style.marginTop = '10px';
+        magicCreateMenu.appendChild(createButton);
+
+        createButton.addEventListener('click', function() {
+            const firstElement = firstElementInput.value;
+            const secondElement = secondElementInput.value;
+            var text = '';
+            fetch(`https://neal.fun/api/infinite-craft/pair?first=${firstElement}&second=${secondElement}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
                     }
-                    text += new TextDecoder().decode(value);
-                    return readStream();
-                });
-                };
+                    // Return the ReadableStream directly
+                    return response.body;
+                })
+                .then(body => {
+                    const reader = body.getReader();
 
-                return readStream();
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
+                    const readStream = () => {
+                        return reader.read().then(({ done, value }) => {
+                            if (done) {
+                                responseJSON = JSON.parse(text);
+                                let newItem = {"text":responseJSON.result,"emoji":responseJSON.emoji,"discovered":responseJSON.isNew};
+                                items = localStorage.getItem('infinite-craft-data')
+                                items = JSON.parse(items)
+                                items.elements.push(newItem);
+                                localStorage.setItem('infinite-craft-data', JSON.stringify(items))
+                                location.reload();
+                                return;
+                            }
+                            text += new TextDecoder().decode(value);
+                            return readStream();
+                        });
+                    };
+
+                    return readStream();
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+
+            magicCreateMenu.remove();
+        });
     });
 
     let createItemMenu = document.createElement('div');
@@ -245,8 +300,6 @@
     deleteItemMenu.style.border = '1px solid #ddd';
     deleteItemMenu.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
     document.body.appendChild(deleteItemMenu);
- 
-
 
     let deleteItemInput = document.createElement('input');
     deleteItemInput.style.padding = '10px';

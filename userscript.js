@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pytems
 // @namespace    https://py9.dev/
-// @version      1.0.3
+// @version      1.0.4
 // @description  Create & Manage Items in Infinite Craft with an Easy to use Menu!
 // @author       Py9
 // @match        https://neal.fun/infinite-craft/
@@ -10,20 +10,36 @@
 // ==/UserScript==
 
 (function() {
-    const version = '1.0.3';
+    const version = '1.0.4';
     let checkVersion = async () => {
         let response = await fetch('https://raw.githubusercontent.com/Proyo9/Infinite-Hack/main/version.txt');
         let text = await response.text();
-        if (!text.includes(version)) {
+        let latestVersion = text.trim();
+        if (compareVersions(version, latestVersion) === -1) {
             let items = document.querySelectorAll('.item');
             items.forEach(item => {
                 if (item.textContent.includes('Thank you for using Pytems')) {
-                    item.innerHTML = `<span data-v-adfd717a="" class="item-emoji">❗</span> Your Pytems is not up to date, check console to get latest update.`;
+                    item.innerHTML = `<span data-v-adfd717a="" class="item-emoji">❗</span> Pytems Update Available (v${latestVersion})`;
+                    document.getElementById('pytems-update').style.display = 'flex';
                     console.log('%cYour Pytems is not up to date, get the latest update from: %chttps://greasyfork.org/en/scripts/487439-pytems', 'color: red; font-weight: bold;', 'color: blue; text-decoration: underline;');
                 }
             });
-            
         }
+    }
+    function compareVersions(version1, version2) {
+        const parts1 = version1.split('.');
+        const parts2 = version2.split('.');
+        for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+            const num1 = parseInt(parts1[i]) || 0;
+            const num2 = parseInt(parts2[i]) || 0;
+
+            if (num1 < num2) {
+                return -1;
+            } else if (num1 > num2) {
+                return 1;
+            }
+        }
+        return 0;
     }
  
     let script = document.createElement('script');
@@ -334,6 +350,24 @@
         items.elements = items.elements.filter(e => e.text !== deleteItemInput.value)
         localStorage.setItem('infinite-craft-data', JSON.stringify(items))
         location.reload();
+    });
+
+    let updateButton = document.createElement('button');
+    updateButton.textContent = 'Update';
+    updateButton.style.zIndex = 1000000;
+    updateButton.style.padding = '10px 20px';
+    updateButton.style.backgroundColor = '#2196F3';
+    updateButton.style.color = 'white';
+    updateButton.style.border = 'none';
+    updateButton.style.borderRadius = '5px';
+    updateButton.style.cursor = 'pointer';
+    updateButton.style.marginLeft = '10px';
+    updateButton.style.marginTop = '10px';
+    updateButton.style.display = 'none';
+    updateButton.id = 'pytems-update';
+    buttonContainer.appendChild(updateButton);
+    updateButton.addEventListener('click', function() {
+        window.location.href = 'https://greasyfork.org/en/scripts/487439-pytems';
     });
     
 })();

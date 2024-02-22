@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pytems
 // @namespace    https://py9.dev/
-// @version      1.0.5
+// @version      1.0.6
 // @description  Create & Manage Items in Infinite Craft with an Easy to use Menu!
 // @author       Py9
 // @match        https://neal.fun/infinite-craft/
@@ -10,20 +10,23 @@
 // ==/UserScript==
 
 (function() {
-    const version = '1.0.5';
+    const version = '1.0.6';
+    var updateAvailable = false;
     let checkVersion = async () => {
         let response = await fetch('https://raw.githubusercontent.com/Proyo9/Infinite-Hack/main/version.txt');
         let text = await response.text();
         let latestVersion = text.trim();
         if (compareVersions(version, latestVersion) === -1) {
+            updateAvailable = true;
+            document.getElementById('pytems-update').innerText = `Update (v${latestVersion})`;
+            document.getElementById('pytems-update').style.display = 'flex';
+            console.log('%cYour Pytems is not up to date, get the latest update from: %chttps://greasyfork.org/en/scripts/487439-pytems', 'color: red; font-weight: bold;', 'color: blue; text-decoration: underline;');
             let items = document.querySelectorAll('.item');
-            items.forEach(item => {
+            /*items.forEach(item => {
                 if (item.textContent.includes('Thank you for using Pytems')) {
                     item.innerHTML = `<span data-v-adfd717a="" class="item-emoji">❗</span> Pytems Update Available (v${latestVersion})`;
-                    document.getElementById('pytems-update').style.display = 'flex';
-                    console.log('%cYour Pytems is not up to date, get the latest update from: %chttps://greasyfork.org/en/scripts/487439-pytems', 'color: red; font-weight: bold;', 'color: blue; text-decoration: underline;');
                 }
-            });
+            });*/
         }
     }
     function compareVersions(version1, version2) {
@@ -41,25 +44,31 @@
         }
         return 0;
     }
-
+    checkVersion();
     let script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
     script.type = 'module';
     document.head.appendChild(script);
+    let ht = localStorage.getItem('pytems:hidethanks');
     let items = localStorage.getItem('infinite-craft-data')
-    if (items === null) {
-        items = {"elements":[{"text":"Water","emoji":"💧","discovered":false},{"text":"Fire","emoji":"🔥","discovered":false},{"text":"Wind","emoji":"🌬️","discovered":false},{"text":"Earth","emoji":"🌍","discovered":false}]}
+    if (ht && !updateAvailable) {
+        items = JSON.parse(items);
+        items.elements = items.elements.filter(e => e.text !== 'Thank you for using Pytems');
+        localStorage.setItem('infinite-craft-data', JSON.stringify(items));
     } else {
-        items = JSON.parse(items)
+        if (items === null) {
+            items = {"elements":[{"text":"Water","emoji":"💧","discovered":false},{"text":"Fire","emoji":"🔥","discovered":false},{"text":"Wind","emoji":"🌬️","discovered":false},{"text":"Earth","emoji":"🌍","discovered":false}]}
+        } else {
+            items = JSON.parse(items)
+        }
+        localStorage.setItem('infinite-craft-data', JSON.stringify(items))
+        let thanks = {"text":"Thank you for using Pytems","emoji":"🍉","discovered":false}
+        if (!items.elements.some(e => e.text === thanks.text)) {
+            items.elements.unshift(thanks)
+    
+        }
+        localStorage.setItem('infinite-craft-data', JSON.stringify(items))
     }
-    localStorage.setItem('infinite-craft-data', JSON.stringify(items))
-    let thanks = {"text":"Thank you for using Pytems","emoji":"🍉","discovered":false}
-    if (!items.elements.some(e => e.text === thanks.text)) {
-        items.elements.unshift(thanks)
- 
-    }
-    localStorage.setItem('infinite-craft-data', JSON.stringify(items))
-    checkVersion();
  
     let buttonContainer = document.createElement('div');
     buttonContainer.style.display = 'flex';
@@ -374,6 +383,72 @@
     updateButton.addEventListener('click', function() {
         window.location.href = 'https://greasyfork.org/en/scripts/487439-pytems';
     });
+
+    let settingsMenu = document.createElement('div');
+    settingsMenu.style.position = 'fixed';
+    settingsMenu.style.top = '15%';
+    settingsMenu.style.right = '50%';
+    settingsMenu.style.transform = 'translateX(50%)';
+    settingsMenu.style.zIndex = 1000000;
+    settingsMenu.style.padding = '20px';
+    settingsMenu.style.backgroundColor = 'white';
+    settingsMenu.style.borderRadius = '5px';
+    settingsMenu.style.display = 'none';
+    settingsMenu.style.flexDirection = 'column';
+    settingsMenu.style.alignItems = 'center';
+    settingsMenu.style.justifyContent = 'center';
+    settingsMenu.style.border = '1px solid #ddd';
+    settingsMenu.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+    document.body.appendChild(settingsMenu);
+
+    settingsMenu.innerHTML = `
+    <style>
+    #pytems-github {
+        margin-top: 10px;
+        color: #2196F3;
+        text-decoration: none;
+    }
+    #pytems-github:hover {
+        text-decoration: underline;
+    }
+    #pytems-settings-close {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    #pytems-settings-close:hover {
+        background-color: #ff6666;
+    }
+    .checkbox-info {
+        margin-top: 10px;
+    }
+    .pytems-label {
+        margin-left: 10px;
+    }
+    </style>
+    <h1>Pytems Settings</h1>
+    <span class="checkbox-info"><input type="checkbox" id="pytems-setting-hidethanks"></input><label for="pytems-setting-hidethanks" class="pytems-label">Hide Thanks Item</label></span>
+    <a href="https://github.com/Proyo9/Infinite-Hack/" target="_blank" id="pytems-github">GitHub</a>
+    <button id="pytems-settings-close">Close</button>
+    `;
+
+    let settingsClose = document.getElementById('pytems-settings-close');
+    settingsClose.addEventListener('click', function() {
+        // save settings
+        let hideThanks = document.getElementById('pytems-setting-hidethanks').checked;
+        hideThanks ? localStorage.setItem('pytems:hidethanks', hideThanks) : localStorage.removeItem('pytems:hidethanks');
+
+        window.location.reload();
+    });
+
+    let hideThanks = localStorage.getItem('pytems:hidethanks');
+    if (hideThanks) {
+        document.getElementById('pytems-setting-hidethanks').checked = true;
+    }
     
     let darkmodesetting = localStorage.getItem('pytems:darkmode');
     if (darkmodesetting) {
@@ -459,6 +534,7 @@
             createItemMenu.style.backgroundColor = '#2e2e2e';
             deleteItemMenu.style.backgroundColor = '#2e2e2e';
             magicCreateMenu.style.backgroundColor = '#2e2e2e';
+            settingsMenu.style.backgroundColor = '#2e2e2e';
         }, 10);
     }
 
@@ -468,8 +544,13 @@
             <img data-v-0d6976f8="" src="https://static-00.iconduck.com/assets.00/moon-icon-1868x2048-ifpp8fum.png" class="coffee">
         </a>
         `
+        let settingsToggle = `
+        <a data-v-0d6976f8="" target="_blank" class="settingstoggle" id="settingstoggle" style="margin-top: 4px;">
+            <img data-v-0d6976f8="" src="https://static-00.iconduck.com/assets.00/gear-icon-2048x2048-5lk2g86a.png" class="coffee">
+        </a>
+        `
         let sideControls = document.querySelector('.side-controls');
-        sideControls.innerHTML = darkmodeToggle + sideControls.innerHTML;
+        sideControls.innerHTML = darkmodeToggle + settingsToggle + sideControls.innerHTML;
         let darkmodeButton = document.getElementById('darkmodetoggle');
         darkmodeButton.addEventListener('click', function() {
             if (localStorage.getItem('pytems:darkmode')) {
@@ -479,6 +560,10 @@
                 localStorage.setItem('pytems:darkmode', 'true');
                 location.reload();
             }
+        });
+        let settingsButton = document.getElementById('settingstoggle');
+        settingsButton.addEventListener('click', function() {
+            settingsMenu.style.display = 'flex';
         });
     }, 500);
 })();

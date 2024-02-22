@@ -41,7 +41,7 @@
         }
         return 0;
     }
- 
+
     let script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
     script.type = 'module';
@@ -98,7 +98,7 @@
         document.querySelectorAll('.sidebar-input').forEach(input => input.disabled = true);
         deleteItemMenu.style.display = 'flex';
     });
- 
+
     let magicCreateButton = document.createElement('button');
     magicCreateButton.textContent = 'Magic Create';
     magicCreateButton.style.zIndex = 1000000;
@@ -113,97 +113,99 @@
     buttonContainer.appendChild(magicCreateButton);
     magicCreateButton.addEventListener('click', function() {
         document.querySelectorAll('.sidebar-input').forEach(input => input.disabled = true);
-        let magicCreateMenu = document.createElement('div');
-        magicCreateMenu.style.position = 'fixed';
-        magicCreateMenu.style.top = '15%';
-        magicCreateMenu.style.left = '50%';
-        magicCreateMenu.style.transform = 'translateX(-50%)';
-        magicCreateMenu.style.zIndex = 1000000;
-        magicCreateMenu.style.padding = '20px';
-        magicCreateMenu.style.backgroundColor = 'white';
-        magicCreateMenu.style.borderRadius = '5px';
         magicCreateMenu.style.display = 'flex';
-        magicCreateMenu.style.flexDirection = 'column';
-        magicCreateMenu.style.alignItems = 'center';
-        magicCreateMenu.style.justifyContent = 'center';
-        magicCreateMenu.style.border = '1px solid #ddd';
-        magicCreateMenu.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
-        document.body.appendChild(magicCreateMenu);
+    });
 
-        let firstElementInput = document.createElement('input');
-        firstElementInput.style.padding = '10px';
-        firstElementInput.style.margin = '5px';
-        firstElementInput.style.width = '100%';
-        firstElementInput.style.border = '1px solid #ddd';
-        firstElementInput.style.borderRadius = '5px';
-        firstElementInput.style.fontSize = '16px';
-        firstElementInput.style.outline = 'none';
-        firstElementInput.placeholder = "Element One";
-        magicCreateMenu.appendChild(firstElementInput);
+    let magicCreateMenu = document.createElement('div');
+    magicCreateMenu.style.position = 'fixed';
+    magicCreateMenu.style.top = '15%';
+    magicCreateMenu.style.left = '50%';
+    magicCreateMenu.style.transform = 'translateX(-50%)';
+    magicCreateMenu.style.zIndex = 1000000;
+    magicCreateMenu.style.padding = '20px';
+    magicCreateMenu.style.backgroundColor = 'white';
+    magicCreateMenu.style.borderRadius = '5px';
+    magicCreateMenu.style.display = 'none';
+    magicCreateMenu.style.flexDirection = 'column';
+    magicCreateMenu.style.alignItems = 'center';
+    magicCreateMenu.style.justifyContent = 'center';
+    magicCreateMenu.style.border = '1px solid #ddd';
+    magicCreateMenu.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+    document.body.appendChild(magicCreateMenu);
 
-        let secondElementInput = document.createElement('input');
-        secondElementInput.style.padding = '10px';
-        secondElementInput.style.margin = '5px';
-        secondElementInput.style.width = '100%';
-        secondElementInput.style.border = '1px solid #ddd';
-        secondElementInput.style.borderRadius = '5px';
-        secondElementInput.style.fontSize = '16px';
-        secondElementInput.style.outline = 'none';
-        secondElementInput.placeholder = "Element Two";
-        magicCreateMenu.appendChild(secondElementInput);
+    let firstElementInput = document.createElement('input');
+    firstElementInput.style.padding = '10px';
+    firstElementInput.style.margin = '5px';
+    firstElementInput.style.width = '100%';
+    firstElementInput.style.border = '1px solid #ddd';
+    firstElementInput.style.borderRadius = '5px';
+    firstElementInput.style.fontSize = '16px';
+    firstElementInput.style.outline = 'none';
+    firstElementInput.placeholder = "Element One";
+    magicCreateMenu.appendChild(firstElementInput);
 
-        let createButton = document.createElement('button');
-        createButton.textContent = 'Create';
-        createButton.style.zIndex = 1000000;
-        createButton.style.padding = '10px 20px';
-        createButton.style.backgroundColor = '#6779d0';
-        createButton.style.color = 'white';
-        createButton.style.border = 'none';
-        createButton.style.borderRadius = '5px';
-        createButton.style.cursor = 'pointer';
-        createButton.style.marginTop = '10px';
-        magicCreateMenu.appendChild(createButton);
+    let secondElementInput = document.createElement('input');
+    secondElementInput.style.padding = '10px';
+    secondElementInput.style.margin = '5px';
+    secondElementInput.style.width = '100%';
+    secondElementInput.style.border = '1px solid #ddd';
+    secondElementInput.style.borderRadius = '5px';
+    secondElementInput.style.fontSize = '16px';
+    secondElementInput.style.outline = 'none';
+    secondElementInput.placeholder = "Element Two";
+    magicCreateMenu.appendChild(secondElementInput);
 
-        createButton.addEventListener('click', function() {
-            const firstElement = firstElementInput.value;
-            const secondElement = secondElementInput.value;
-            var text = '';
-            fetch(`https://neal.fun/api/infinite-craft/pair?first=${firstElement}&second=${secondElement}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    // Return the ReadableStream directly
-                    return response.body;
-                })
-                .then(body => {
-                    const reader = body.getReader();
+    let magicCreateButton2 = document.createElement('button');
+    magicCreateButton2.textContent = 'Create';
+    magicCreateButton2.style.zIndex = 1000000;
+    magicCreateButton2.style.padding = '10px 20px';
+    magicCreateButton2.style.backgroundColor = '#6779d0';
+    magicCreateButton2.style.color = 'white';
+    magicCreateButton2.style.border = 'none';
+    magicCreateButton2.style.borderRadius = '5px';
+    magicCreateButton2.style.cursor = 'pointer';
+    magicCreateButton2.style.marginTop = '10px';
+    magicCreateMenu.appendChild(magicCreateButton2);
 
-                    const readStream = () => {
-                        return reader.read().then(({ done, value }) => {
-                            if (done) {
-                                responseJSON = JSON.parse(text);
-                                let newItem = {"text":responseJSON.result,"emoji":responseJSON.emoji,"discovered":responseJSON.isNew};
-                                items = localStorage.getItem('infinite-craft-data')
-                                items = JSON.parse(items)
-                                items.elements.push(newItem);
-                                localStorage.setItem('infinite-craft-data', JSON.stringify(items))
-                                location.reload();
-                                return;
-                            }
-                            text += new TextDecoder().decode(value);
-                            return readStream();
-                        });
-                    };
+    magicCreateButton2.addEventListener('click', function() {
+        const firstElement = firstElementInput.value;
+        const secondElement = secondElementInput.value;
+        var text = '';
+        fetch(`https://neal.fun/api/infinite-craft/pair?first=${firstElement}&second=${secondElement}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Return the ReadableStream directly
+                return response.body;
+            })
+            .then(body => {
+                const reader = body.getReader();
 
-                    return readStream();
-                })
-                .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
-                });
+                const readStream = () => {
+                    return reader.read().then(({ done, value }) => {
+                        if (done) {
+                            responseJSON = JSON.parse(text);
+                            let newItem = {"text":responseJSON.result,"emoji":responseJSON.emoji,"discovered":responseJSON.isNew};
+                            items = localStorage.getItem('infinite-craft-data')
+                            items = JSON.parse(items)
+                            items.elements.push(newItem);
+                            localStorage.setItem('infinite-craft-data', JSON.stringify(items))
+                            location.reload();
+                            return;
+                        }
+                        text += new TextDecoder().decode(value);
+                        return readStream();
+                    });
+                };
 
-            magicCreateMenu.remove();
-        });
+                return readStream();
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+        magicCreateMenu.remove();
     });
 
     let createItemMenu = document.createElement('div');
@@ -373,4 +375,110 @@
         window.location.href = 'https://greasyfork.org/en/scripts/487439-pytems';
     });
     
+    let darkmodesetting = localStorage.getItem('pytems:darkmode');
+    if (darkmodesetting) {
+        setTimeout(() => {
+            // darkmode
+            let customstyle = document.createElement('style');
+            customstyle.id = 'pytems-style';
+            customstyle.innerHTML = `
+            body {
+                color: white !important;
+            }   
+            .items {
+                background-color: #1e1e1e !important;
+                color: white !important;
+            }
+            .item {
+                background-color: #2e2e2e !important;
+                color: white !important;
+            }
+            .item:hover {
+                background: #3e3e3e !important;
+            }
+            .container {
+                background-color: #1e1e1e !important;
+            }
+            .reset {
+                color: white !important;
+            }
+            .sidebar-sorting-item {
+                background-color: #2e2e2e !important;
+                color: white !important;
+            }
+            .sidebar-input {
+                background-color: #2e2e2e !important;
+                color: white !important;
+            }
+            .item-selected {
+                background: #3e3e3e !important;
+            }
+            .instance {
+                background: #2e2e2e !important;
+            }
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+            ::-webkit-scrollbar-track {
+                background: #2e2e2e;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #3e3e3e;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: #4e4e4e;
+            }
+            input {
+                color: white !important;
+                background-color: #2e2e2e !important;
+            }
+            `
+            let emojiPicker = document.querySelector('emoji-picker');
+            emojiPicker.classList.add('dark');
+            createButton.style.backgroundColor = 'transparent';
+            createButton.style.border = 'solid 2px #4CAF50';
+            deleteButton.style.backgroundColor = 'transparent';
+            deleteButton.style.border = 'solid 2px #f44336';
+            magicCreateButton.style.backgroundColor = 'transparent';
+            magicCreateButton.style.border = 'solid 2px #6779d0';
+            document.head.appendChild(customstyle);
+            let checkImagesInterval = setInterval(() => {
+                let images = document.querySelectorAll('img');
+                if (images.length === 9) {
+                    clearInterval(checkImagesInterval);
+                    images.forEach(image => {
+                        image.style.filter = 'invert(1)';
+                    });
+                }
+            }, 100);
+            let canvas = document.querySelector('.particles');
+            canvas.style.filter = 'invert(1)';
+            createItemMenu.style.backgroundColor = '#2e2e2e';
+            deleteItemMenu.style.backgroundColor = '#2e2e2e';
+            magicCreateMenu.style.backgroundColor = '#2e2e2e';
+        }, 10);
+    }
+
+    setTimeout(() => {
+        let darkmodeToggle = `
+        <a data-v-0d6976f8="" target="_blank" class="darkmodetoggle" id="darkmodetoggle" style="margin-top: 3.5px;">
+            <img data-v-0d6976f8="" src="https://static-00.iconduck.com/assets.00/moon-icon-1868x2048-ifpp8fum.png" class="coffee">
+        </a>
+        `
+        let sideControls = document.querySelector('.side-controls');
+        sideControls.innerHTML = darkmodeToggle + sideControls.innerHTML;
+        let darkmodeButton = document.getElementById('darkmodetoggle');
+        if (darkmodesetting) {
+            darkmodeButton.style.filter = 'invert(1)';
+        }
+        darkmodeButton.addEventListener('click', function() {
+            if (localStorage.getItem('pytems:darkmode')) {
+                localStorage.removeItem('pytems:darkmode');
+                location.reload();
+            } else {
+                localStorage.setItem('pytems:darkmode', 'true');
+                location.reload();
+            }
+        });
+    }, 500);
 })();

@@ -41,7 +41,7 @@
         }
         return 0;
     }
- 
+
     let script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
     script.type = 'module';
@@ -111,9 +111,9 @@
     magicCreateButton.style.marginLeft = '10px';
     magicCreateButton.style.marginTop = '10px';
     buttonContainer.appendChild(magicCreateButton);
+    let magicCreateMenu = document.createElement('div');
     magicCreateButton.addEventListener('click', function() {
         document.querySelectorAll('.sidebar-input').forEach(input => input.disabled = true);
-        let magicCreateMenu = document.createElement('div');
         magicCreateMenu.style.position = 'fixed';
         magicCreateMenu.style.top = '15%';
         magicCreateMenu.style.left = '50%';
@@ -373,4 +373,68 @@
         window.location.href = 'https://greasyfork.org/en/scripts/487439-pytems';
     });
     
+
+    setTimeout(() => {
+        // darkmode
+        let customstyle = document.createElement('style');
+        customstyle.id = 'pytems-style';
+        customstyle.innerHTML = `
+        body {
+            color: white !important;
+        }   
+        .items {
+            background-color: #1e1e1e !important;
+            color: white !important;
+        }
+        .item {
+            background-color: #2e2e2e !important;
+            color: white !important;
+        }
+        .item:hover {
+            background: #3e3e3e !important;
+        }
+        .container {
+            background-color: #1e1e1e !important;
+        }
+        .reset {
+            color: white !important;
+        }
+        .sidebar-sorting-item {
+            background-color: #2e2e2e !important;
+            color: white !important;
+        }
+        .sidebar-input {
+            background-color: #2e2e2e !important;
+            color: white !important;
+        }
+        .item-selected {
+            background: #3e3e3e !important;
+        }
+        .instance {
+            background: #2e2e2e !important;
+        }
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2e2e2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3e3e3e;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4e4e4e;
+        }
+        `
+        document.head.appendChild(customstyle);
+        let images = document.querySelectorAll('img');
+        images.forEach(image => {
+            image.style.filter = 'invert(1)';
+        });
+        let canvas = document.querySelector('.particles');
+        canvas.style.filter = 'invert(1)';
+        createItemMenu.style.backgroundColor = '#2e2e2e';
+        deleteItemMenu.style.backgroundColor = '#2e2e2e';
+        magicCreateMenu.style.backgroundColor = '#2e2e2e';
+    }, 1000);
 })();

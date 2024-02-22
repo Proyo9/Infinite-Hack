@@ -432,6 +432,9 @@
                 color: white !important;
                 background-color: #2e2e2e !important;
             }
+            img {
+                filter: invert(1) !important;
+            }
             `
             let emojiPicker = document.querySelector('emoji-picker');
             emojiPicker.classList.add('dark');
@@ -468,9 +471,6 @@
         let sideControls = document.querySelector('.side-controls');
         sideControls.innerHTML = darkmodeToggle + sideControls.innerHTML;
         let darkmodeButton = document.getElementById('darkmodetoggle');
-        if (darkmodesetting) {
-            darkmodeButton.style.filter = 'invert(1)';
-        }
         darkmodeButton.addEventListener('click', function() {
             if (localStorage.getItem('pytems:darkmode')) {
                 localStorage.removeItem('pytems:darkmode');

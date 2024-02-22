@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pytems
 // @namespace    https://py9.dev/
-// @version      1.0.6
+// @version      1.0.7
 // @description  Create & Manage Items in Infinite Craft with an Easy to use Menu!
 // @author       Py9
 // @match        https://neal.fun/infinite-craft/
@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 (function() {
-    const version = '1.0.6';
+    const version = '1.0.7';
     var updateAvailable = false;
     let checkVersion = async () => {
         let response = await fetch('https://raw.githubusercontent.com/Proyo9/Infinite-Hack/main/version.txt');
@@ -51,16 +51,15 @@
     document.head.appendChild(script);
     let ht = localStorage.getItem('pytems:hidethanks');
     let items = localStorage.getItem('infinite-craft-data')
+    if (items === null) {
+        items = {"elements":[{"text":"Water","emoji":"💧","discovered":false},{"text":"Fire","emoji":"🔥","discovered":false},{"text":"Wind","emoji":"🌬️","discovered":false},{"text":"Earth","emoji":"🌍","discovered":false}]}
+    } else {
+        items = JSON.parse(items)
+    }
     if (ht && !updateAvailable) {
-        items = JSON.parse(items);
         items.elements = items.elements.filter(e => e.text !== 'Thank you for using Pytems');
         localStorage.setItem('infinite-craft-data', JSON.stringify(items));
     } else {
-        if (items === null) {
-            items = {"elements":[{"text":"Water","emoji":"💧","discovered":false},{"text":"Fire","emoji":"🔥","discovered":false},{"text":"Wind","emoji":"🌬️","discovered":false},{"text":"Earth","emoji":"🌍","discovered":false}]}
-        } else {
-            items = JSON.parse(items)
-        }
         localStorage.setItem('infinite-craft-data', JSON.stringify(items))
         let thanks = {"text":"Thank you for using Pytems","emoji":"🍉","discovered":false}
         if (!items.elements.some(e => e.text === thanks.text)) {
@@ -381,7 +380,7 @@
     updateButton.id = 'pytems-update';
     buttonContainer.appendChild(updateButton);
     updateButton.addEventListener('click', function() {
-        window.location.href = 'https://greasyfork.org/en/scripts/487439-pytems';
+        window.open('https://greasyfork.org/en/scripts/487439-pytems', '_blank');
     });
 
     let settingsMenu = document.createElement('div');

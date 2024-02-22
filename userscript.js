@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pytems
 // @namespace    https://py9.dev/
-// @version      1.0.4
+// @version      1.0.5
 // @description  Create & Manage Items in Infinite Craft with an Easy to use Menu!
 // @author       Py9
 // @match        https://neal.fun/infinite-craft/
@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 (function() {
-    const version = '1.0.4';
+    const version = '1.0.5';
     let checkVersion = async () => {
         let response = await fetch('https://raw.githubusercontent.com/Proyo9/Infinite-Hack/main/version.txt');
         let text = await response.text();
@@ -78,6 +78,7 @@
     createButton.style.marginTop = '10px';
     buttonContainer.appendChild(createButton);
     createButton.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-input').forEach(input => input.disabled = true);
         createItemMenu.style.display = 'flex';
     });
  
@@ -94,6 +95,7 @@
     deleteButton.style.marginTop = '10px';
     buttonContainer.appendChild(deleteButton);
     deleteButton.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-input').forEach(input => input.disabled = true);
         deleteItemMenu.style.display = 'flex';
     });
  
@@ -110,6 +112,7 @@
     magicCreateButton.style.marginTop = '10px';
     buttonContainer.appendChild(magicCreateButton);
     magicCreateButton.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-input').forEach(input => input.disabled = true);
         let magicCreateMenu = document.createElement('div');
         magicCreateMenu.style.position = 'fixed';
         magicCreateMenu.style.top = '15%';

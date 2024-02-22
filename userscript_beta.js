@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pytems
 // @namespace    https://py9.dev/
-// @version      1.0.7
+// @version      1.1.0
 // @description  Create & Manage Items in Infinite Craft with an Easy to use Menu!
 // @author       Py9
 // @match        https://neal.fun/infinite-craft/
@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 (function() {
-    const version = '1.0.7';
+    const version = '1.1.0';
     var updateAvailable = false;
     let checkVersion = async () => {
         let response = await fetch('https://raw.githubusercontent.com/Proyo9/Infinite-Hack/main/version.txt');
@@ -68,6 +68,8 @@
         }
         localStorage.setItem('infinite-craft-data', JSON.stringify(items))
     }
+
+    let cheatsDisabled = localStorage.getItem('pytems:cheats');
  
     let buttonContainer = document.createElement('div');
     buttonContainer.style.display = 'flex';
@@ -84,6 +86,7 @@
     createButton.style.borderRadius = '5px';
     createButton.style.cursor = 'pointer';
     createButton.style.marginTop = '10px';
+    if (cheatsDisabled) { createButton.style.display = 'none'; }
     buttonContainer.appendChild(createButton);
     createButton.addEventListener('click', function() {
         document.querySelectorAll('.sidebar-input').forEach(input => input.disabled = true);
@@ -101,6 +104,7 @@
     deleteButton.style.cursor = 'pointer';
     deleteButton.style.marginLeft = '10px';
     deleteButton.style.marginTop = '10px';
+    if (cheatsDisabled) { deleteButton.style.display = 'none'; }
     buttonContainer.appendChild(deleteButton);
     deleteButton.addEventListener('click', function() {
         document.querySelectorAll('.sidebar-input').forEach(input => input.disabled = true);
@@ -119,6 +123,7 @@
     magicCreateButton.style.marginLeft = '10px';
     magicCreateButton.style.marginTop = '10px';
     buttonContainer.appendChild(magicCreateButton);
+    if (cheatsDisabled) { magicCreateButton.style.display = 'none'; }
     magicCreateButton.addEventListener('click', function() {
         document.querySelectorAll('.sidebar-input').forEach(input => input.disabled = true);
         magicCreateMenu.style.display = 'flex';
@@ -431,6 +436,7 @@
     </style>
     <h1>Pytems Settings</h1>
     <span class="checkbox-info"><input type="checkbox" id="pytems-setting-hidethanks"></input><label for="pytems-setting-hidethanks" class="pytems-label">Hide Thanks Item</label></span>
+    <span class="checkbox-info"><input type="checkbox" id="pytems-setting-cheats"></input><label for="pytems-setting-cheats" class="pytems-label">Disable Cheats</label></span>
     <a href="https://github.com/Proyo9/Infinite-Hack/" target="_blank" id="pytems-github">GitHub</a>
     <button id="pytems-settings-close">Close</button>
     `;
@@ -440,6 +446,8 @@
         // save settings
         let hideThanks = document.getElementById('pytems-setting-hidethanks').checked;
         hideThanks ? localStorage.setItem('pytems:hidethanks', hideThanks) : localStorage.removeItem('pytems:hidethanks');
+        let cheats = document.getElementById('pytems-setting-cheats').checked;
+        cheats ? localStorage.setItem('pytems:cheats', cheats) : localStorage.removeItem('pytems:cheats');
 
         window.location.reload();
     });
@@ -448,7 +456,167 @@
     if (hideThanks) {
         document.getElementById('pytems-setting-hidethanks').checked = true;
     }
-    
+    let cheats = localStorage.getItem('pytems:cheats');
+    if (cheats) {
+        document.getElementById('pytems-setting-cheats').checked = true;
+    }
+
+    let saveManagerMenu = document.createElement('div');
+    saveManagerMenu.style.position = 'fixed';
+    saveManagerMenu.style.top = '15%';
+    saveManagerMenu.style.right = '50%';
+    saveManagerMenu.style.transform = 'translateX(50%)';
+    saveManagerMenu.style.zIndex = 1000000;
+    saveManagerMenu.style.padding = '20px';
+    saveManagerMenu.style.backgroundColor = 'white';
+    saveManagerMenu.style.borderRadius = '5px';
+    saveManagerMenu.style.display = 'none';
+    saveManagerMenu.style.flexDirection = 'column';
+    saveManagerMenu.style.alignItems = 'center';
+    saveManagerMenu.style.justifyContent = 'center';
+    saveManagerMenu.style.border = '1px solid #ddd';
+    saveManagerMenu.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+    document.body.appendChild(saveManagerMenu);
+
+    const styles = `
+    <style>
+        #pytems-save-close {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #pytems-save-close:hover {
+            background-color: #ff6666;
+        }
+        .pytems-label {
+            margin-left: 10px;
+        }
+        .select-sm,
+        .input-sm {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+        }
+        .button-sm {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+    `;
+
+    const renderSaveManagerMenu = (title, content) => {
+        saveManagerMenu.innerHTML = `
+            ${styles}
+            <h1>${title}</h1>
+            ${content}
+        `;
+    };
+
+    const reloadPage = () => {
+        window.location.reload();
+    };
+
+    const saveData = (saveName) => {
+        const saveData = localStorage.getItem('infinite-craft-data');
+        localStorage.setItem(`pytems-save:${saveName}`, saveData);
+        saveManagerMenu.style.display = 'none';
+        reloadPage();
+    };
+
+    const loadData = (saveName) => {
+        if (saveName === '') return;
+        const saveData = localStorage.getItem(`pytems-save:${saveName}`);
+        localStorage.setItem('infinite-craft-data', saveData);
+        reloadPage();
+    };
+
+    const deleteData = (saveName) => {
+        localStorage.removeItem(`pytems-save:${saveName}`);
+        reloadPage();
+    };
+
+    renderSaveManagerMenu('Save Manager', `
+        <p>This feature is in beta, there are a lot of UI bugs</p>
+        <select id="pytems-sm-type" style="margin-bottom: 10px;" class="select-sm">
+            <option value="save">Save</option>
+            <option value="load">Load</option>
+            <option value="delete">Delete</option>
+        </select>
+        <span class="sm-buttons">
+            <button id="pytems-sm-Cancel" class="button-sm" style="background-color: #f44336;">Cancel</button>
+            <button id="pytems-sm-next" class="button-sm">Next</button>
+        </span>
+    `);
+
+    const smType = document.getElementById('pytems-sm-type');
+    const smNext = document.getElementById('pytems-sm-next');
+    const smCancel = document.getElementById('pytems-sm-Cancel');
+
+    smCancel.addEventListener('click', reloadPage);
+
+    smNext.addEventListener('click', () => {
+        const type = smType.value;
+        if (type === 'save') {
+            renderSaveManagerMenu('Save Manager', `
+                <input type="text" id="pytems-sm-save-name" placeholder="Save Name" style="margin-bottom: 10px;" class="input-sm">
+                <span class="sm-buttons">
+                    <button id="pytems-sm-Cancel" class="button-sm" style="background-color: #f44336;">Cancel</button>
+                    <button id="pytems-sm-save" class="button-sm">Save</button>
+                </span>
+            `);
+            const smSave = document.getElementById('pytems-sm-save');
+            smSave.addEventListener('click', () => {
+                const saveName = document.getElementById('pytems-sm-save-name').value;
+                saveData(saveName);
+            });
+        } else if (type === 'load') {
+            const saveNames = Object.keys(localStorage).filter(key => key.startsWith('pytems-save:')).map(key => key.replace('pytems-save:', ''));
+            renderSaveManagerMenu('Save Manager', `
+                <select id="pytems-sm-save-name" style="margin-bottom: 10px;" class="select-sm">
+                    ${saveNames.map(name => `<option value="${name}">${name}</option>`).join('')}
+                </select>
+                <span class="sm-buttons">
+                    <button id="pytems-sm-Cancel" class="button-sm" style="background-color: #f44336;">Cancel</button>
+                    <button id="pytems-sm-load" class="button-sm">Load</button>
+                </span>
+            `);
+            const smLoad = document.getElementById('pytems-sm-load');
+            smLoad.addEventListener('click', () => {
+                const saveName = document.getElementById('pytems-sm-save-name').value;
+                loadData(saveName);
+            });
+        } else if (type === 'delete') {
+            const saveNames = Object.keys(localStorage).filter(key => key.startsWith('pytems-save:')).map(key => key.replace('pytems-save:', ''));
+            renderSaveManagerMenu('Save Manager', `
+                <select id="pytems-sm-save-name" style="margin-bottom: 10px;" class="select-sm">
+                    ${saveNames.map(name => `<option value="${name}">${name}</option>`).join('')}
+                </select>
+                <span class="sm-buttons">
+                    <button id="pytems-sm-Cancel" class="button-sm" style="background-color: #f44336;">Cancel</button>
+                    <button id="pytems-sm-delete" class="button-sm">Delete</button>
+                </span>
+            `);
+            const smDelete = document.getElementById('pytems-sm-delete');
+            smDelete.addEventListener('click', () => {
+                const saveName = document.getElementById('pytems-sm-save-name').value;
+                deleteData(saveName);
+            });
+        }
+        smCancel.addEventListener('click', reloadPage);
+    });
+
     let darkmodesetting = localStorage.getItem('pytems:darkmode');
     if (darkmodesetting) {
         setTimeout(() => {
@@ -528,28 +696,39 @@
                     });
                 }
             }, 100);
-            let canvas = document.querySelector('.particles');
-            canvas.style.filter = 'invert(1)';
+            let checkCanvasInterval = setInterval(() => {
+                let canvas = document.querySelector('.particles');
+                if (canvas) {
+                    clearInterval(checkCanvasInterval);
+                    canvas.style.filter = 'invert(1)';
+                }
+            }, 100);
             createItemMenu.style.backgroundColor = '#2e2e2e';
             deleteItemMenu.style.backgroundColor = '#2e2e2e';
             magicCreateMenu.style.backgroundColor = '#2e2e2e';
             settingsMenu.style.backgroundColor = '#2e2e2e';
+            saveManagerMenu.style.backgroundColor = '#2e2e2e';
         }, 10);
     }
 
     setTimeout(() => {
         let darkmodeToggle = `
         <a data-v-0d6976f8="" target="_blank" class="darkmodetoggle" id="darkmodetoggle" style="margin-top: 3.5px;">
-            <img data-v-0d6976f8="" src="https://static-00.iconduck.com/assets.00/moon-icon-1868x2048-ifpp8fum.png" class="coffee">
+            <img data-v-0d6976f8="" src="https://static-00.iconduck.com/assets.00/moon-icon-1868x2048-ifpp8fum.png" class="coffee" style="width: 18px; height: 18px;">
         </a>
         `
         let settingsToggle = `
         <a data-v-0d6976f8="" target="_blank" class="settingstoggle" id="settingstoggle" style="margin-top: 4px;">
-            <img data-v-0d6976f8="" src="https://static-00.iconduck.com/assets.00/gear-icon-2048x2048-5lk2g86a.png" class="coffee">
+            <img data-v-0d6976f8="" src="https://static-00.iconduck.com/assets.00/gear-icon-2048x2048-5lk2g86a.png" class="coffee" style="width: 18px; height: 18px;">
+        </a>
+        `
+        let saveManager = `
+        <a data-v-0d6976f8="" target="_blank" class="saveManager" id="saveManager" style="margin-top: 4px;">
+            <img data-v-0d6976f8="" src="https://static-00.iconduck.com/assets.00/save-icon-512x512-552twxqx.png" class="coffee" style="width: 18px; height: 18px;">
         </a>
         `
         let sideControls = document.querySelector('.side-controls');
-        sideControls.innerHTML = darkmodeToggle + settingsToggle + sideControls.innerHTML;
+        sideControls.innerHTML = darkmodeToggle + settingsToggle + saveManager + sideControls.innerHTML;
         let darkmodeButton = document.getElementById('darkmodetoggle');
         darkmodeButton.addEventListener('click', function() {
             if (localStorage.getItem('pytems:darkmode')) {
@@ -563,6 +742,17 @@
         let settingsButton = document.getElementById('settingstoggle');
         settingsButton.addEventListener('click', function() {
             settingsMenu.style.display = 'flex';
+        });
+        document.querySelector('.clear').addEventListener('click', function() {
+            window.location.reload()
+            /*document.querySelectorAll('.instance').forEach(instance => {
+                instance.remove();
+            });*/
+        });
+        let saveManagerButton = document.getElementById('saveManager');
+        saveManagerButton.addEventListener('click', function() {
+            saveManagerMenu.style.display = 'flex';
+            document.querySelectorAll('.sidebar-input').forEach(input => input.disabled = true);
         });
     }, 500);
 })();
